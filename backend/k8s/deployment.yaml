@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vm-management-backend
+  labels:
+    app: vm-management-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vm-management-backend
+  template:
+    metadata:
+      labels:
+        app: vm-management-backend
+    spec:
+      containers:
+      - name: vm-management-backend
+        image: your-registry/vm-management-backend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: vm-management-secrets
+              key: mongodb-uri
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: vm-management-secrets
+              key: jwt-secret
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
